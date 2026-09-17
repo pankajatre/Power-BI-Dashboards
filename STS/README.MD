@@ -78,48 +78,6 @@ The model contains 180+ DAX measures. Variable-enabled DAX (`VAR ... RETURN`) is
 - Built using `USERELATIONSHIP` against an inactive **Previous Calendar Year** table, so rolling 12-month figures can be compared without disturbing the main date relationship
 
 
-<details>
-<summary>Sample: MTD Sales Growth</summary>
-
-```dax
-QTD Sales Growth = 
-VAR Growth = [QTD Sales for Currency] - [Last Year QTD Sales]
-RETURN
-IF(
-    ISBLANK([Last Year QTD Sales]),
-    BLANK(),
-    DIVIDE(Growth, [Last Year QTD Sales], 0)
-)
-```
-</details>
-
-<details>
-<summary>Sample: Dynamic currency conversion</summary>
-
-```dax
-Cost Conv = 
-VAR To_curr = 
-    IF(
-        SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]) = BLANK(),
-        "AUD",
-        SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])
-    )
-VAR curr_rate =
-    CALCULATE(
-        MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),
-        FILTER(ALL('Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)
-    )
-VAR valuec =
-    IF(
-        To_curr = "AUD",
-        MAX('Fact Inventory Summary'[ITEM_COST_AUD]),
-        MAX('Fact Inventory Summary'[ITEM_COST_AUD]) * curr_rate * 1.00000
-    )
-RETURN
-    valuec
-```
-</details>
-
 ---
 
 ### 📸 Screenshots
