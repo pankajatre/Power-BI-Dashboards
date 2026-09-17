@@ -89,10 +89,10 @@ RETURN
 ### 📸 Screenshots
 
 **Daily Sales**
-![Daily Sales](images/Daily%20Sales.png)
+![Daily Sales](Images/Daily%20Sales.png)
 
 **Sales Summary**
-![Sales Summary](images/Sales%20Summary.png)
+![Sales Summary](Images/Sales%20Summary.png)
 
 ---
 
