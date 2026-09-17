@@ -88,6 +88,15 @@ The model contains 180+ DAX measures. Variable-enabled DAX (`VAR ... RETURN`) is
 **Sales Summary**
 ![Sales Summary](Images/Sales%20Summary.png)
 
+**Sales Performance**
+![Sales Performance](Images/Sales%20Performance.png)
+
+**Decomposition Tree**
+![Decomposition Tree](Images/Decomposition%20Tree.png)
+
+**Data Modeling**
+![Data Modeling](Images/Data%20Modeling.png)
+
 ---
 
 ## 🧠 What This Project Demonstrates
