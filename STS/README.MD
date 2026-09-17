@@ -115,7 +115,3 @@ The model contains 180+ DAX measures. Variable-enabled DAX (`VAR ... RETURN`) is
 - **SQL** — stored procedures, incremental loading, views
 
 ---
-
-## 📬 Contact
-
-*Add your name, LinkedIn, and portfolio link here.*
