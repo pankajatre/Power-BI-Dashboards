@@ -1,0 +1,1391 @@
+Name,Expression
+Date As of,TODAY() - 1 
+Measure 2,
+Year for Tool Tip,max('Dim Calendar'[Date])
+Today's Date,TODAY()
+Month for Tool Tip,"
+Var MaxDate = Max('Dim Calendar'[Date])
+
+RETURN
+CALCULATE(
+    MAX('Dim Calendar'[Month Name]),
+    FILTER('Dim Calendar',
+    'Dim Calendar'[Date] = MaxDate
+    )
+)"
+Cost Conv test,"
+var To_curr = SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])
+var curr_rate =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+return
+
+curr_rate
+
+
+"
+Average Inventory Cost Last 12 Months New,"DIVIDE([Inventory Cost Last 12 Months],12,0)"
+In transit value,"SUMX('Fact Inventory Summary', [Cost Conv] * 'Fact Inventory Summary'[QTY_IN_TRANSIT])"
+QTD Margin (%) Tile,"FORMAT([QTD Margin] / 1000000, ""$#,##0.00M"") & "" ("" & FORMAT([QTD Profit Margin %], ""0.00%"") & "")"""
+test 12 Months Inventory QTY,"CALCULATE(SUM('Fact Invoice and Credit'[QTY]), FILTER(ALL('Dim Calendar'), 'Dim Calendar'[Date]>=MAX('Dim Calendar'[PREVIOUS_12_MONTH_START_DATE]) && 'Dim Calendar'[Date]<= MAX('Dim Calendar'
+[PREVIOUS_MONTH_END_DATE])))"
+Total On Hand Quantity PYMTD,"CALCULATE([Total Quantity On Hand],FILTER(ALL('Dim Calendar'),'Dim Calendar'[Year]= MAX('Dim Calendar'[Year])-1 && 'Dim Calendar'[Month]=MAX('Dim Calendar'[Month])))"
+Cost Conv,"
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))
+var curr_rate =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+
+Var valuec =
+ IF( (To_curr) =""AUD"",MAX('Fact Inventory Summary'[ITEM_COST_AUD]),
+ MAX('Fact Inventory Summary'[ITEM_COST_AUD])* curr_rate * 1.00000)
+ 
+
+Return valuec
+"
+SalesAmount,sum('Fact Invoice and Credit'[SALES_AMOUNT])
+Current On Hand Quanity,"--CALCULATE([Total Quantity On Hand],'Fact Inventory Summary'[CURRENT_INVENTORY_FLAG]=""Y"")
+CALCULATE([Total Quantity On Hand]
+ ,FILTER(ALL('Dim Calendar'),'Dim Calendar'[Year]= MAX('Dim Calendar'[Year]) && 'Dim Calendar'[Month]=MAX('Dim Calendar'[Current Month])))"
+Total On Hand Value PYMTD Conv,"CALCULATE([Total Quantity On Hand] ,FILTER(ALL('Dim Calendar'),'Dim Calendar'[Year]= MAX('Dim Calendar'[Year])-1 && 'Dim Calendar'[Month]=MAX('Dim Calendar'[Month])))"
+Total On Hand Value,"SUMX('Fact Inventory Summary', [Cost Conv] * 'Fact Inventory Summary'[QTY_ON_HAND])"
+Orders MTD,"CALCULATE([Unit Orders],DATESMTD('Dim Calendar'[Date]))
+
+
+
+"
+Total Intransit Quantity,SUM('Fact Inventory Summary'[QTY_IN_TRANSIT])
+Profit for currency,"
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))  
+var curr_rate_Budget =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+
+Var Values_budget = Sum('Fact Invoice and Credit'[MARGIN_TOTAL]) ---- Change here 
+Var Values_MtHavg =SUM('Fact Invoice and Credit'[MARGIN_TOTAL_MTHAVGCX])  --- Change Here
+Var Curr_Rate_Monthly = CALCULATE(SELECTEDVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE]),'Fact Currency Rate MTHAVG'[FROM_CURRENCY]=To_curr)
+Var Curr_rate_Monthly_1 = SUMX('Fact Invoice and Credit',
+                                'Fact Invoice and Credit'[MARGIN_TOTAL_MTHAVGCX] *---- Change here 
+                                LOOKUPVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE],
+                                'Fact Currency Rate MTHAVG'[FROM_CURRENCY],
+                                To_curr
+                                )
+)
+Var Curr_rate_Budget_1 =  Values_budget * curr_rate_budget * 1.00000
+Var Cal = IF(ISBLANK(Curr_rate_Monthly_1),Curr_rate_Budget_1,Curr_rate_Monthly_1)
+var out3=
+
+         IF(To_curr = ""AUD"",Values_MtHavg, 
+         Cal
+         )
+
+Return out3
+
+"
+Last Year QTD Sales for Sale by Product,"
+CALCULATE(
+    [QTD Sales for Currency],
+    DATEADD('Dim Calendar'[Date],-12,MONTH)
+)"
+Total Orders Using Currency Filter,"
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))
+var curr_rate =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+return 
+ IF( (To_curr) =""AUD"",[Total Orders],
+( [Total Orders]* curr_rate * 1.00000)
+ )"
+Turns,"
+var calcu = DIVIDE([Sales Cogs Last 12 Months], [Average Inventory Cost Last 12 Months New],0)
+return IF (isblank(calcu),0,Calcu)"
+Unit Orders,DISTINCTCOUNT('Fact Invoice and Credit'[Reference_Num_Unique_Id])
+Total Quantity On Hand,"SUM('Fact Inventory Summary'[QTY_ON_HAND])
+--'Fact Inventory Summary'[CURRENT_INVENTORY_FLAG]=""Y"",ALL('Dim Calendar')))"
+Average Daily Sales Past 12 months,"
+var INvqty = CALCULATE(SUM('Fact Invoice and Credit'[QTY]), FILTER(ALL('Dim Calendar'), 'Dim Calendar'[Date]>=MAX('Dim Calendar'[Previous 12 months Start date_CURRENT]) && 'Dim Calendar'[Date]<= MAX('Dim Calendar'[Previous month end date_CURRENT])))
+--var totalsales =Divide([12 Months Inventory QTY],365,0)--SUM('Fact Sales Item details'[BASE_QTY])
+return Divide(INvqty,365,0)"
+Refresh Date Source,"
+Var Myob = calculate(Max('Fact Inventory Summary'[SNAPSHOT_DATE]),FILTER(ALL('Fact Inventory Summary'),'Fact Inventory Summary'[DATA_SOURCE_SID]=1))
+Var SAP = calculate(Max('Fact Inventory Summary'[SNAPSHOT_DATE]),FILTER(ALL('Fact Inventory Summary'),'Fact Inventory Summary'[DATA_SOURCE_SID]=2))
+Var PIXI = calculate(Max('Fact Inventory Summary'[SNAPSHOT_DATE]),FILTER(ALL('Fact Inventory Summary'),'Fact Inventory Summary'[DATA_SOURCE_SID]=3))
+Var CIRDAN = calculate(Max('Fact Inventory Summary'[SNAPSHOT_DATE]),FILTER(ALL('Fact Inventory Summary'),'Fact Inventory Summary'[DATA_SOURCE_SID]=4))
+Var PIXI_CH =calculate(Max('Fact Inventory Summary'[SNAPSHOT_DATE]),FILTER(ALL('Fact Inventory Summary'),'Fact Inventory Summary'[DATA_SOURCE_SID]=5))
+Return 
+CONCATENATE(CONCATENATE(CONCATENATE(CONCATENATE(Concatenate(Concatenate(Concatenate(concatenate(Concatenate("" Snapshot Date -      MYOB:"",Myob),"";      SAP:""),SAP),"";      PIXI:""),PIXI),"";      CIRDAN:""),CIRDAN),"";      PIXI_CH:""),PIXI_CH)"
+MTD Margin,"CALCULATE([Profit for currency],DATESMTD('Dim Calendar'[Date])
+)"
+Matrix,"
+VAR SelectedValueFromMatrix = SELECTEDVALUE('Paramater - Sales Decomposition Tree'[Name])
+Var GetId = 
+CALCULATE(
+    Max('Paramater - Sales Decomposition Tree'[Id]),
+    FILTER(
+        'Paramater - Sales Decomposition Tree',
+        'Paramater - Sales Decomposition Tree'[Name] = SelectedValueFromMatrix
+    )
+)
+RETURN
+SWITCH(
+    GetId,
+    1,[Total Sales],
+    2,[Total Orders],
+    3,[Profit for currency],
+    4,[Profit Margin %]*100)"
+Discount Value for Currency,"
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))  
+var curr_rate_Budget =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+
+Var Values_budget = Sum('Fact Invoice and Credit'[DISCOUNT_VALUE]) ---- Change here 
+Var Values_MtHavg =SUM('Fact Invoice and Credit'[DISCOUNT_VALUE_MTHAVGCX])  --- Change Here
+Var Curr_Rate_Monthly = CALCULATE(SELECTEDVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE]),'Fact Currency Rate MTHAVG'[FROM_CURRENCY]=To_curr)
+Var Curr_rate_Monthly_1 = SUMX('Fact Invoice and Credit',
+                                'Fact Invoice and Credit'[DISCOUNT_VALUE_MTHAVGCX] *---- Change here 
+                                LOOKUPVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE],
+                                'Fact Currency Rate MTHAVG'[FROM_CURRENCY],
+                                To_curr
+                                )
+)
+Var Curr_rate_Budget_1 =  Values_budget * curr_rate_budget * 1.00000
+Var Cal = IF(ISBLANK(Curr_rate_Monthly_1),Curr_rate_Budget_1,Curr_rate_Monthly_1)
+var out3=
+
+         IF(To_curr = ""AUD"",Values_MtHavg, 
+         Cal
+         )
+
+Return out3
+
+
+
+
+"
+Order for Previous year same month,"
+VAR LastYearSales = 
+CALCULATE(
+    [Total Orders],
+    DATEADD('Dim Calendar'[Date],-12,MONTH)
+    )
+
+RETURN
+LastYearSales"
+New Total Order,DISTINCTCOUNT('Fact Invoice and Credit'[Reference Number])
+MTD Sales for Currency,"
+CALCULATE([Total Sales],DATESMTD('Dim Calendar'[Date]))"
+Inventory On Hand Value Conv,"SUMX('Fact Inventory Summary', [Cost Conv] *'Fact Inventory Summary'[QTY_ON_HAND])"
+Last Year MTD Orders,"
+CALCULATE(
+    [Orders MTD],
+    Dateadd('Dim Calendar'[Date],-12,MONTH)
+)"
+Last Year QTD Orders %,"DIVIDE([Orders QTD],[Last Year QTD Orders],0)-1"
+Orders YTD,"CALCULATE([Unit Orders],DATESYTD('Dim Calendar'[Date]))"
+Orders QTD,"CALCULATE([Unit Orders],DATESQTD('Dim Calendar'[Date]))"
+QTD Sales for Currency,"CALCULATE([Total Sales],DATESQTD('Dim Calendar'[Date]))"
+QTD Sales Growth,"
+VAR Growth = [QTD Sales for Currency] - [Last Year QTD Sales]
+RETURN
+IF(
+    ISBLANK([Last Year QTD Sales])
+    ,BLANK()
+    ,DIVIDE(Growth,[Last Year QTD Sales],0)
+)"
+Total Order %,"DIVIDE([Total Orders],CALCULATE([Total Orders],all('Dim Item'[Item Description])))"
+Sales Price Unit_conv,"
+var SPU =calculate(AVERAGE('Fact Invoice and Credit'[Sales price Unit]),FILTER(ALL('Dim Calendar'), 'Dim Calendar'[Date]>=MAX('Dim Calendar'[Previous 12 months Start date_CURRENT]) && 'Dim Calendar'[Date]<= MAX('Dim Calendar'[PREVIOUS_MONTH_END_DATE])))--SUMX('Fact Invoice and Credit',AVERAGE('Fact Invoice and Credit'[Sales price Unit]))
+
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))
+var curr_rate =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+return 
+ IF( (To_curr) =""AUD"",SPU,
+ ( SPU* curr_rate * 1.00000)
+ )"
+Total Sales,"
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))  
+var curr_rate_Budget =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+
+Var Values_budget = Sum('Fact Invoice and Credit'[SALES_AMOUNT]) ---- Change here 
+Var Values_MtHavg =SUM('Fact Invoice and Credit'[SALES_AMOUNT_MTHAVGCX])  --- Change Here
+Var Curr_Rate_Monthly = CALCULATE(SELECTEDVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE]),'Fact Currency Rate MTHAVG'[FROM_CURRENCY]=To_curr)
+Var Curr_rate_Monthly_1 = SUMX('Fact Invoice and Credit',
+                                'Fact Invoice and Credit'[SALES_AMOUNT_MTHAVGCX] *---- Change here 
+                                LOOKUPVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE],
+                                'Fact Currency Rate MTHAVG'[FROM_CURRENCY],
+                                To_curr
+                                )
+)
+Var Curr_rate_Budget_1 =  Values_budget * curr_rate_budget * 1.00000
+Var Cal = IF(ISBLANK(Curr_rate_Monthly_1),Curr_rate_Budget_1,Curr_rate_Monthly_1)
+var out3=
+
+         IF(To_curr = ""AUD"",Values_MtHavg, 
+         Cal
+         )
+
+Return out3
+
+"
+Total Quantity,Sum('Fact Invoice and Credit'[QTY])
+Previous Year Margin Month,"
+CALCULATE(
+    [Profit for currency],
+    DATEADD('Dim Calendar'[Date],-12,MONTH)
+)"
+Total Sales %,"
+Var TotalSalesforallproduct =
+CALCULATE([Total Sales],ALL('Dim Item'[Item Description]))
+
+RETURN 
+DIVIDE([Total Sales],TotalSalesforallproduct)"
+Total Sales YTD,"
+CALCULATE(
+    [Total Sales],
+    DATESYTD('Dim Calendar'[Date])
+)"
+Sales Performance MTD,"
+VAR NameofPerformance = SELECTEDVALUE('Paramater - Sales Decomposition Tree'[Name])
+VAR GetId = CALCULATE( MAX('Paramater - Sales Decomposition Tree'[Id]),
+                      'Paramater - Sales Decomposition Tree'[Name]  = NameofPerformance
+                        )
+
+Var Result = SWITCH(
+                GetId,
+                1,[MTD Sales for Currency],
+                2,Format([MTD Quantity],""#,###""),
+                3,[MTD Margin],
+                4,FORMAT([MTD Profit Margin %],""0.00%"")
+)
+
+RETURN Result
+
+
+
+"
+YTD Sales For Currency,"
+CALCULATE([Total Sales],DATESYTD('Dim Calendar'[Date]))"
+Average Quantity Ordered MTD,"
+Var CountOfOrders = CALCULATE(Count('Fact Invoice and Credit'[QTY]),DATESMTD('Dim Calendar'[Date]))
+Var SumofOrders = CALCULATE(Sum('Fact Invoice and Credit'[QTY]),DATESMTD('Dim Calendar'[Date]))
+Return 
+DIVIDE(SumofOrders,CountOfOrders,0)
+"
+Total Sales Last month,"
+CALCULATE(
+    [MTD Sales for Currency],
+    DATEADD('Dim Calendar'[Date],-1,YEAR)
+)"
+MTD Sales growth,"
+Var Growth = [Total Sales] - [Total Sales Last month]
+RETURN
+IF(
+    ISBLANK([Total Sales Last month])
+    ,BLANK()
+    ,DIVIDE(Growth,[Total Sales Last month],0)
+)"
+Present Year Sales,"
+Var LastYearSales = 
+CALCULATE(
+    Max('Dim Calendar'[Year])
+)
+
+Var PresentYearSales =
+CALCULATE(
+    [Total Sales],
+    FILTER(
+        ALL('Dim Calendar'),
+        'Dim Calendar'[Year] = LastYearSales
+    )
+)
+RETURN
+PresentYearSales"
+Last Year Sales,"
+Var LastYearDate = 
+CALCULATE(
+    Max('Dim Calendar'[Year]),
+    DATEADD('Dim Calendar'[Date],-1,Year)
+)
+
+Var LastYearSalesAmount =
+CALCULATE(
+    [Total Sales],
+    FILTER(
+        ALL('Dim Calendar'),
+        'Dim Calendar'[Year] = LastYearDate
+    )
+)
+RETURN
+LastYearSalesAmount"
+YTD Sales Growth,"
+VAR Growth = [YTD Sales] - [Last Year YTD Sales]
+RETURN
+IF(
+    ISBLANK([Last Year YTD Sales])
+    ,BLANK()
+    ,DIVIDE(Growth,[Last Year YTD Sales],0)
+)"
+Margin (%) Tile,"FORMAT([Profit for currency] / 1000000, ""$#,##0.00M"")  & "" ("" & FORMAT([Profit Margin %], ""0.00%"") & "")"""
+QTD Margin,"CALCULATE([Profit for currency],DATESQTD('Dim Calendar'[Date]))"
+YTD Margin,"CALCULATE([Profit for currency],DATESYTD('Dim Calendar'[Date]))"
+MTD Margin for Currency,"
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))
+var curr_rate =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+return 
+ IF( (To_curr) =""AUD"",[MTD Margin],
+( [MTD Margin]* curr_rate * 1.00000)
+ )"
+QTD Margin for Currency,"
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))
+var curr_rate =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+return 
+ IF( (To_curr) =""AUD"",[QTD Margin],
+( [QTD Margin]* curr_rate * 1.00000)
+ )"
+Last Year MTD Sales,"
+CALCULATE(
+    [MTD Sales for Currency],
+    SAMEPERIODLASTYEAR('Dim Calendar'[Date])
+)
+
+"
+Last Year QTD Sales,"
+CALCULATE(
+    [QTD Sales for Currency],
+    DATEADD('Dim Calendar'[Date],-12,MONTH)
+)"
+Last Year YTD Sales,"
+CALCULATE(
+    [YTD Sales For Currency],
+    DATEADD(('Dim Calendar'[Date]),-12,MONTH)
+)"
+Last Year YTD  Sales %,"DIVIDE([YTD Sales For Currency],[Last Year YTD Sales],0)-1
+"
+YTD Sales,"CALCULATE([Total Sales],DATESYTD('Dim Calendar'[Date]))"
+Last Year QTD  Sales %,"DIVIDE([QTD Sales for Currency],[Last Year QTD Sales],0)-1
+"
+MTD Sales for Report by,"
+CALCULATE([Total Sales],DATESMTD('Dim Calendar'[Date]))"
+Last Year MTD Orders %,"DIVIDE([Orders MTD],[Last Year MTD Orders],0)-1"
+Average Quantity Ordered QTD,"
+Var CountOfOrders = CALCULATE(Count('Fact Invoice and Credit'[QTY]),DATESQTD('Dim Calendar'[Date]))
+Var SumofOrders = CALCULATE(Sum('Fact Invoice and Credit'[QTY]),DATESQTD('Dim Calendar'[Date]))
+Return 
+DIVIDE(SumofOrders,CountOfOrders,0)"
+Average Quantity Ordered YTD,"
+Var CountOfOrders = CALCULATE(Count('Fact Invoice and Credit'[QTY]),DATESYTD('Dim Calendar'[Date]))
+Var SumofOrders = CALCULATE(Sum('Fact Invoice and Credit'[QTY]),DATESYTD('Dim Calendar'[Date]))
+Return 
+DIVIDE(SumofOrders,CountOfOrders,0)"
+Last Year QTD Orders,"
+CALCULATE(
+    [Orders QTD],
+    SAMEPERIODLASTYEAR('Dim Calendar'[Date])
+)"
+Total MTD Last Year,"
+CALCULATE( [MTD Sales for Currency], ALL('Dim Calendar'[Week Number Of Month]))"
+Last Year YTD Orders,"
+CALCULATE(
+    [Orders YTD],
+    SAMEPERIODLASTYEAR('Dim Calendar'[Date])
+)"
+Last Year YTD Orders %,"DIVIDE([Orders YTD],[Last Year YTD Orders],0)-1"
+Unit cost for Currency,"
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))  
+var curr_rate_Budget =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+
+Var Values_budget = Sum('Fact Invoice and Credit'[Cost Price unit]) ---- Change here 
+Var Values_MtHavg =SUM('Fact Invoice and Credit'[Cost_Price_unit_MTHAVGCX])  --- Change Here
+Var Curr_Rate_Monthly = CALCULATE(SELECTEDVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE]),'Fact Currency Rate MTHAVG'[FROM_CURRENCY]=To_curr)
+Var Curr_rate_Monthly_1 = SUMX('Fact Invoice and Credit',
+                                'Fact Invoice and Credit'[Cost_Price_unit_MTHAVGCX] *---- Change here 
+                                LOOKUPVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE],
+                                'Fact Currency Rate MTHAVG'[FROM_CURRENCY],
+                                To_curr
+                                )
+)
+Var Curr_rate_Budget_1 =  Values_budget * curr_rate_budget * 1.00000
+Var Cal = IF(ISBLANK(Curr_rate_Monthly_1),Curr_rate_Budget_1,Curr_rate_Monthly_1)
+var out3=
+
+         IF(To_curr = ""AUD"",Values_MtHavg, 
+         Cal
+         )
+
+Return out3
+
+
+
+"
+Price for Currency,"
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))  
+var curr_rate_Budget =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+
+Var Values_budget = Sum('Fact Invoice and Credit'[Sales price Unit]) ---- Change here 
+Var Values_MtHavg =SUM('Fact Invoice and Credit'[Sales_price_Unit_MTHAVGCX])  --- Change Here
+Var Curr_Rate_Monthly = CALCULATE(SELECTEDVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE]),'Fact Currency Rate MTHAVG'[FROM_CURRENCY]=To_curr)
+Var Curr_rate_Monthly_1 = SUMX('Fact Invoice and Credit',
+                                'Fact Invoice and Credit'[Sales_price_Unit_MTHAVGCX] *---- Change here 
+                                LOOKUPVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE],
+                                'Fact Currency Rate MTHAVG'[FROM_CURRENCY],
+                                To_curr
+                                )
+)
+Var Curr_rate_Budget_1 =  Values_budget * curr_rate_budget * 1.00000
+Var Cal = IF(ISBLANK(Curr_rate_Monthly_1),Curr_rate_Budget_1,Curr_rate_Monthly_1)
+var out3=
+
+         IF(To_curr = ""AUD"",Values_MtHavg, 
+         Cal
+         )
+
+Return out3
+
+
+
+"
+Discount Percentage,Sum('Fact Invoice and Credit'[DISCOUNT_PERC])/100
+Profit for currency for tooltip,"
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))  
+var curr_rate_Budget =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+
+Var Values_budget = Sum('Fact Invoice and Credit'[MARGIN_TOTAL]) ---- Change here 
+Var Values_MtHavg =SUM('Fact Invoice and Credit'[MARGIN_TOTAL_MTHAVGCX])  --- Change Here
+Var Curr_Rate_Monthly = CALCULATE(SELECTEDVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE]),'Fact Currency Rate MTHAVG'[FROM_CURRENCY]=To_curr)
+Var Curr_rate_Monthly_1 = SUMX('Fact Invoice and Credit',
+                                'Fact Invoice and Credit'[MARGIN_TOTAL_MTHAVGCX] *---- Change here 
+                                LOOKUPVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE],
+                                'Fact Currency Rate MTHAVG'[FROM_CURRENCY],
+                                To_curr
+                                )
+)
+Var Curr_rate_Budget_1 =  Values_budget * curr_rate_budget * 1.00000
+Var Cal = IF(ISBLANK(Curr_rate_Monthly_1),Curr_rate_Budget_1,Curr_rate_Monthly_1)
+var out3=
+
+         IF(To_curr = ""AUD"",Values_MtHavg, 
+         Cal
+         )
+
+Return out3"
+Total Sales For currency_inv,"
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))  
+var curr_rate_Budget =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+
+Var Values_budget = Sum('Fact Invoice and Credit'[SALES_AMOUNT]) ---- Change here 
+Var Values_MtHavg =SUM('Fact Invoice and Credit'[SALES_AMOUNT_MTHAVGCX])  --- Change Here
+Var Curr_Rate_Monthly = CALCULATE(SELECTEDVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE]),'Fact Currency Rate MTHAVG'[FROM_CURRENCY]=To_curr)
+Var Curr_rate_Monthly_1 = SUMX('Fact Invoice and Credit',
+                                'Fact Invoice and Credit'[SALES_AMOUNT_MTHAVGCX] *---- Change here 
+                                LOOKUPVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE],
+                                'Fact Currency Rate MTHAVG'[FROM_CURRENCY],
+                                To_curr
+                                )
+)
+Var Curr_rate_Budget_1 =  Values_budget * curr_rate_budget * 1.00000
+Var Cal = IF(ISBLANK(Curr_rate_Monthly_1),Curr_rate_Budget_1,Curr_rate_Monthly_1)
+var out3=
+
+         IF(To_curr = ""AUD"",Values_MtHavg, 
+         Cal
+         )
+
+Return out3
+
+"
+Count of Days FOR TMLY,"
+Var DateYearSelected = SELECTEDVALUE('Dim Calendar'[Date].[Year])
+Var DateMonthSelected = SELECTEDVALUE('Dim Calendar'[Date].[MonthNo])
+Var Result = 
+CALCULATE(
+    DISTINCTCOUNT('Dim Calendar'[Date]),
+    FILTER(
+        ALL('Dim Calendar'),
+        YEAR('Dim Calendar'[Date]) = DateYearSelected -1
+        && Month('Dim Calendar'[Date]) = DateMonthSelected
+        && 'Dim Calendar'[Week Number of Month as Monday] = SELECTEDVALUE('Dim Calendar'[Week Number of Month as Monday])
+    )
+)
+RETURN Result"
+MTD Profit Margin %,"
+DIVIDE(
+    CALCULATE(
+        [Profit for currency],
+        DATESMTD('Dim Calendar'[Date])
+    ),
+    CALCULATE(
+        [Total Sales],
+        DATESMTD('Dim Calendar'[Date])
+    ),
+    0
+) 
+"
+YTD Profit Margin %,"
+DIVIDE(
+    CALCULATE(
+        [Profit for currency],
+        DATESYTD('Dim Calendar'[Date])
+    ),
+    CALCULATE(
+        [Total Sales],
+        DATESYTD('Dim Calendar'[Date])
+    ),
+    0
+) 
+"
+QTD Profit Margin %,"
+DIVIDE(
+    CALCULATE(
+        [Profit for currency],
+        DATESQTD('Dim Calendar'[Date])
+    ),
+    CALCULATE(
+        [Total Sales],
+        DATESQTD('Dim Calendar'[Date])
+    ),
+    0
+) 
+"
+Total Orders,"
+SUM('Fact Invoice and Credit'[QTY])"
+Total On Hand Value PYMTD,"CALCULATE([Total On Hand Value] ,FILTER(ALL('Dim Calendar'),'Dim Calendar'[Year]= MAX('Dim Calendar'[Year])-1 && 'Dim Calendar'[Month]=MAX('Dim Calendar'[Month])))"
+Sales Last 12 months,"
+ var rev = CALCULATE(SUM('Fact Invoice and Credit'[SALES_AMOUNT]), FILTER(ALL('Dim Calendar'), 'Dim Calendar'[Date]>=MAX('Dim Calendar'[Previous 12 months Start date_CURRENT]) && 'Dim Calendar'[Date]<= MAX('Dim Calendar'[Previous month end date_CURRENT])))
+ var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))
+var curr_rate =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+return 
+ IF( (To_curr) =""AUD"",rev,
+ ( rev* curr_rate * 1.00000))"
+Growth Order Month %,"
+var LastYearSales =
+CALCULATE(
+    [Total Orders],
+    DATEADD('Dim Calendar'[Date],-1,MONTH)
+)
+var PresentYearSales = [Total Orders]
+
+RETURN
+IF(ISBLANK(LastYearSales),0,(PresentYearSales-LastYearSales)/LastYearSales)"
+Total On Hand Value_AUD TEST,"SUMX('Fact Inventory Summary', 'Fact Inventory Summary'[ITEM_COST_AUD] * 'Fact Inventory Summary'[QTY_ON_HAND])"
+Orders,"
+VAR SelectedValueFromMatrix = SELECTEDVALUE('Selection table - Sales/Order Summary Report'[Name ])
+Var GetId = 
+CALCULATE(
+    Max('Selection table - Sales/Order Summary Report'[Id]),
+    FILTER(
+        'Selection table - Sales/Order Summary Report',
+        'Selection table - Sales/Order Summary Report'[Name ] = SelectedValueFromMatrix
+    )
+)
+RETURN
+SWITCH(
+    GetId,
+    1,[Orders MTD],
+    2,[Orders QTD],
+    3,[Orders YTD])"
+Sales,"
+VAR SelectedValueFromMatrix = SELECTEDVALUE('Selection table - Sales/Order Summary Report'[Name ])
+Var GetId = 
+CALCULATE(
+    Max('Selection table - Sales/Order Summary Report'[Id]),
+    FILTER(
+        'Selection table - Sales/Order Summary Report',
+        'Selection table - Sales/Order Summary Report'[Name ] = SelectedValueFromMatrix
+    )
+)
+RETURN
+SWITCH(
+    GetId,
+    1,[MTD Sales for Currency],
+    2,[QTD Sales for Currency],
+    3,[YTD Sales For Currency])"
+COGS for Currency,"
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))  
+var curr_rate_Budget =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+
+Var Values_budget = Sum('Fact Invoice and Credit'[COGS]) ---- Change here 
+Var Values_MtHavg =SUM('Fact Invoice and Credit'[COGS_MTHAVGCX])  --- Change Here
+Var Curr_Rate_Monthly = CALCULATE(SELECTEDVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE]),'Fact Currency Rate MTHAVG'[FROM_CURRENCY]=To_curr)
+Var Curr_rate_Monthly_1 = SUMX('Fact Invoice and Credit',
+                                'Fact Invoice and Credit'[COGS_MTHAVGCX] *---- Change here 
+                                LOOKUPVALUE('Fact Currency Rate MTHAVG'[CURRENCY_RATE],
+                                'Fact Currency Rate MTHAVG'[FROM_CURRENCY],
+                                To_curr
+                                )
+)
+Var Curr_rate_Budget_1 =  Values_budget * curr_rate_budget * 1.00000
+Var Cal = IF(ISBLANK(Curr_rate_Monthly_1),Curr_rate_Budget_1,Curr_rate_Monthly_1)
+var out3=
+
+         IF(To_curr = ""AUD"",Values_MtHavg, 
+         Cal
+         )
+
+Return out3
+
+
+"
+Present Year Sales Month,[Total Sales]
+Previous Year Sales Month,"
+CALCULATE(
+    [Total Sales],
+    DATEADD('Dim Calendar'[Date],-12,MONTH)
+)"
+SalesGrowth,"
+VAR CurrentPeriodSales = [Total Sales] 
+VAR PreviousPeriodSales = CALCULATE([Total Sales], DATEADD('Dim Calendar'[Date], -1, MONTH)) 
+
+RETURN 
+IF(ISBLANK(PreviousPeriodSales), BLANK(), (CurrentPeriodSales - PreviousPeriodSales) / PreviousPeriodSales)
+"
+Margin for Sales Decomposition tree,"
+VAR Profit = [Profit for currency]
+VAR TotalSales = [Total Sales]
+VAR Profit_Margin_Percent = DIVIDE(Profit, TotalSales, 0)
+VAR Formatted_Profit = FORMAT(Profit / 1000000, ""$#,##0.00M"")
+VAR Formatted_Percent = FORMAT(Profit_Margin_Percent, ""0.00%"")
+RETURN
+    Formatted_Profit & "" ("" & Formatted_Percent & "")""
+"
+Sales by Title measure,"
+Var GetName = SELECTEDVALUE('Parameter - Sales/Order Report'[Parameter Fields])
+
+
+RETURN
+Switch(
+    GetName,
+    ""'Fact Invoice and Credit'[Entity]"",""Sales by:""&""                                                             ""&""Entity"",
+    ""'Fact Invoice and Credit'[Channel]"",""Sales by:""&""                                                            ""&""Channel"",
+    ""'Fact Invoice and Credit'[Account_Type]"",""Sales by:""&""                                                       ""&""Customer Group"",
+    ""'Fact Invoice and Credit'[Customer Class description]"",""Sales by:""&""                                                       ""&""Customer Class"",
+    ""'Dim Item'[Category]"",""Sales by:""&""                                                             ""&""Category"",
+    ""'Dim Item'[Brand Name]"",""Sales by:""&""                                                           ""&""Brand Name"",
+    ""'Dim Item'[Family]"",""Sales by:""&""                                                             ""&""Family"",
+    ""'Dim Item'[Brand Group]"",""Sales by:""&""                                                             ""&""Brand Group""
+    )"
+Last Year MTD Margin,"
+CALCULATE(
+    [MTD Margin],
+    SAMEPERIODLASTYEAR('Dim Calendar'[Date])
+)
+"
+Sales Performance MTD LY,"
+VAR NameofPerformance = SELECTEDVALUE('Paramater - Sales Decomposition Tree'[Name])
+VAR GetId = CALCULATE( MAX('Paramater - Sales Decomposition Tree'[Id]),
+                      'Paramater - Sales Decomposition Tree'[Name]  = NameofPerformance
+                        )
+
+
+Var Result = SWITCH(
+                GetId,
+                1,[Last Year MTD Sales],
+                2,Format([Last Year MTD Qty],""#,###""),
+                3,[Last Year MTD Margin],
+                4,FORMAT([Last Year MTD Profit Margin %],""0.00%"")
+)
+
+RETURN Result"
+MTD Margin Growth,"
+Var PreviousYearMarginGrowth = 
+CALCULATE(
+    [MTD Margin],
+    DATEADD('Dim Calendar'[Date],-1,YEAR)
+)
+Var Growth = [Profit for currency] - PreviousYearMarginGrowth
+
+RETURN
+IF(
+    ISBLANK(PreviousYearMarginGrowth)
+    ,BLANK()
+    ,DIVIDE(Growth,PreviousYearMarginGrowth,0)
+)"
+Sales Performance MTD Growth,"
+VAR NameofPerformance = SELECTEDVALUE('Paramater - Sales Decomposition Tree'[Name])
+VAR GetId = CALCULATE( MAX('Paramater - Sales Decomposition Tree'[Id]),
+                      'Paramater - Sales Decomposition Tree'[Name]  = NameofPerformance
+                        )
+
+Var Result = SWITCH(
+                GetId,
+                1,[MTD Sales growth],
+                2,[MTD Qty growth],
+                3,[MTD Margin Growth],
+                4,[MTD Margin Growth]
+)
+
+RETURN Result"
+Sales Performance QTD,"
+VAR NameofPerformance = SELECTEDVALUE('Paramater - Sales Decomposition Tree'[Name])
+VAR GetId = CALCULATE( MAX('Paramater - Sales Decomposition Tree'[Id]),
+                      'Paramater - Sales Decomposition Tree'[Name]  = NameofPerformance
+                        )
+
+Var Result = SWITCH(
+                GetId,
+                1,[QTD Sales for Currency],
+                2,Format([QTD Quantity],""#,###""),
+                3,[QTD Margin],
+                4,FORMAT([QTD Profit Margin %],""0.00%"")
+)
+
+RETURN Result"
+Last Year QTD Margin,"
+CALCULATE(
+    [QTD Margin],
+    DATEADD('Dim Calendar'[Date],-12,MONTH))"
+Sales Performance QTD LY,"
+VAR NameofPerformance = SELECTEDVALUE('Paramater - Sales Decomposition Tree'[Name])
+VAR GetId = CALCULATE( MAX('Paramater - Sales Decomposition Tree'[Id]),
+                      'Paramater - Sales Decomposition Tree'[Name]  = NameofPerformance
+                        )
+
+
+Var Result = SWITCH(
+                GetId,
+                1,[Last Year QTD Sales],
+                2,FORMAT([Last Year QTD Qty],""#,###""),
+                3,[Last Year QTD Margin],
+                4,FORMAT([Last Year QTD Profit Margin %],""0.00%"")
+)
+
+RETURN Result"
+QTD Margin Growth,"
+VAR Growth = [QTD Margin] - [Last Year QTD Margin]
+RETURN
+IF(
+    ISBLANK([Last Year QTD Margin])
+    ,BLANK()
+    ,DIVIDE(Growth,[Last Year QTD Margin],0)
+)"
+Sales Performance QTD Growth,"
+VAR NameofPerformance = SELECTEDVALUE('Paramater - Sales Decomposition Tree'[Name])
+VAR GetId = CALCULATE( MAX('Paramater - Sales Decomposition Tree'[Id]),
+                      'Paramater - Sales Decomposition Tree'[Name]  = NameofPerformance
+                        )
+
+Var Result = SWITCH(
+                GetId,
+                1,[QTD Sales Growth],
+                2,[QTD Qty growth],
+                3,[QTD Margin Growth],
+                4,[QTD Margin Growth]
+)
+
+RETURN Result"
+Sales Performance YTD,"
+VAR NameofPerformance = SELECTEDVALUE('Paramater - Sales Decomposition Tree'[Name])
+VAR GetId = CALCULATE( MAX('Paramater - Sales Decomposition Tree'[Id]),
+                      'Paramater - Sales Decomposition Tree'[Name]  = NameofPerformance
+                        )
+
+
+Var Result = SWITCH(
+                GetId,
+                1,[YTD Sales For Currency],
+                2,FORMAT([YTD Quantity],""#,###""),
+                3,[YTD Margin],
+                4,Format([YTD Profit Margin %],""0.00%"")
+)
+
+RETURN Result"
+Last Year YTD Margin,"
+CALCULATE(
+    [YTD Margin],
+    DATEADD(('Dim Calendar'[Date]),-12,MONTH)
+)"
+Sales Performance YTD LY,"
+
+VAR NameofPerformance = SELECTEDVALUE('Paramater - Sales Decomposition Tree'[Name])
+VAR GetId = CALCULATE( MAX('Paramater - Sales Decomposition Tree'[Id]),
+                      'Paramater - Sales Decomposition Tree'[Name]  = NameofPerformance
+                        )
+
+Var Result = SWITCH(
+                GetId,
+                1,[Last Year YTD Sales],
+                2,FORMAT([Last Year YTD Qty],""#,###""),
+                3,[Last Year YTD Margin],
+                4,FORMAT([Last Year YTD Profit Margin %],""0.00%"")
+)
+
+RETURN Result"
+YTD Margin Growth,"
+VAR Growth = [YTD Margin] - [Last Year YTD Margin]
+RETURN
+IF(
+    ISBLANK([Last Year YTD Margin])
+    ,BLANK()
+    ,DIVIDE(Growth,[Last Year YTD Margin],0)
+)"
+Sales Performance YTD Growth,"
+VAR NameofPerformance = SELECTEDVALUE('Paramater - Sales Decomposition Tree'[Name])
+VAR GetId = CALCULATE( MAX('Paramater - Sales Decomposition Tree'[Id]),
+                      'Paramater - Sales Decomposition Tree'[Name]  = NameofPerformance
+                        )
+
+
+Var Result = SWITCH(
+                GetId,
+                1,[YTD Sales Growth],
+                2,[YTD Qty growth],
+                3,[YTD Margin Growth],
+                4,[YTD Margin Growth]
+)
+
+RETURN Result"
+Profit Margin %,"
+DIVIDE( [Profit for currency],
+        [Total Sales],
+        0
+) 
+"
+Last Year MTD Sales %,"DIVIDE([MTD Sales for Currency],[Last Year MTD Sales],0)-1
+"
+MTD Quantity,"CALCULATE(Sum('Fact Invoice and Credit'[QTY]),DATESMTD('Dim Calendar'[Date]))"
+QTD Quantity,"CALCULATE(Sum('Fact Invoice and Credit'[QTY]),DATESQTD('Dim Calendar'[Date]))"
+YTD Quantity,"CALCULATE(Sum('Fact Invoice and Credit'[QTY]),DATESYTD('Dim Calendar'[Date]))"
+Last Year MTD Qty,"
+CALCULATE(
+    [MTD Quantity],
+    SAMEPERIODLASTYEAR('Dim Calendar'[Date])
+)
+"
+Last Year QTD Qty,"
+CALCULATE(
+    [QTD Quantity],
+    SAMEPERIODLASTYEAR('Dim Calendar'[Date])
+)
+"
+Last Year YTD Qty,"
+CALCULATE(
+    [YTD Quantity],
+    SAMEPERIODLASTYEAR('Dim Calendar'[Date])
+)
+"
+MTD Qty growth,"
+Var Growth = [MTD Quantity] - [Last Year MTD Qty]
+RETURN
+IF(
+    ISBLANK([Last Year MTD Qty])
+    ,BLANK()
+    ,DIVIDE(Growth,[Last Year MTD Qty],0)
+)"
+QTD Qty growth,"
+Var Growth = [QTD Quantity] - [Last Year QTD Qty]
+RETURN
+IF(
+    ISBLANK([Last Year QTD Qty])
+    ,BLANK()
+    ,DIVIDE(Growth,[Last Year QTD Qty],0)
+)"
+YTD Qty growth,"
+Var Growth = [YTD Quantity] - [Last Year YTD Qty]
+RETURN
+IF(
+    ISBLANK([Last Year YTD Qty])
+    ,BLANK()
+    ,DIVIDE(Growth,[Last Year YTD Qty],0)
+)"
+Last Year MTD Profit Margin %,"
+DIVIDE(
+    [Last Year MTD Margin],
+    [Last Year MTD Sales],
+    0
+) "
+Last Year QTD Profit Margin %,"
+DIVIDE(
+    [Last Year QTD Margin],
+    [Last Year QTD Sales],
+    0
+) "
+Last Year YTD Profit Margin %,"
+DIVIDE(
+    [Last Year YTD Margin],
+    [Last Year YTD Sales],
+    0
+) "
+MTD Margin (%) Tile Last Year,"FORMAT([Last Year MTD Margin] / 1000000, ""$#,##0.00M"")  & "" ("" & FORMAT([Last Year MTD Profit Margin %], ""0.00%"") & "")"""
+QTD Margin (%) Tile Last Year,"FORMAT([Last Year QTD Margin] / 1000000, ""$#,##0.00M"")  & "" ("" & FORMAT([Last Year QTD Profit Margin %], ""0.00%"") & "")"""
+YTD Margin (%) Tile Last Year,"FORMAT([Last Year YTD Margin] / 1000000, ""$#,##0.00M"")  & "" ("" & FORMAT([Last Year YTD Profit Margin %], ""0.00%"") & "")"""
+Growth Order Monthly %,"
+VAR LastYearSales = 
+CALCULATE(
+    [Total Orders],
+    DATEADD('Dim Calendar'[Date],-12,MONTH)
+    )
+VAR PresentYearSales = [Total Orders]
+
+VAR Growth = PresentYearSales - LastYearSales
+Return 
+DIVIDE(Growth,LastYearSales,0)"
+Inventory Cost Last 12 Months,"
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))  
+var curr_rate_Budget =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+
+Var Values_budget = calculate(SUM('Fact Inventory Summary'[INVENTORY_VALUE]), FILTER(ALL('Dim Calendar'), 'Dim Calendar'[Date]>=MAX('Dim Calendar'[Previous 12 months Start date_CURRENT]) && 'Dim Calendar'[Date]<= MAX('Dim Calendar'[Previous month end date_CURRENT]))) --- Change here
+Var Values_MtHavg = calculate(SUM('Fact Inventory Summary'[INVENTORY_VALUE]), FILTER(ALL('Dim Calendar'), 'Dim Calendar'[Date]>=MAX('Dim Calendar'[Previous 12 months Start date_CURRENT]) && 'Dim Calendar'[Date]<= MAX('Dim Calendar'[Previous month end date_CURRENT]))) --- Chnage here
+Var Curr_rate_Monthly = Calculate(Values_MtHavg* Max('Fact Currency Rate MTHAVG'[CURRENCY_RATE]),'Fact Currency Rate MTHAVG'[FROM_CURRENCY]=To_curr)
+Var Curr_rate_Budget_1 =  Values_budget* curr_rate_budget * 1.00000
+Var Cal = IF(ISBLANK(Curr_rate_Monthly),curr_rate_Budget_1,Curr_rate_Monthly)
+var out3=
+
+         IF(To_curr = ""AUD"",Values_MtHavg, 
+         Cal
+         )
+
+Return out3
+ "
+Last Year MTD Sales for table visual,"
+CALCULATE(
+    [MTD Sales for Currency],
+    SAMEPERIODLASTYEAR('Dim Calendar'[Date])
+)
+"
+MTD Sales growth For Table Visual,"
+Var Growth = [Total Sales] - [Total Sales Last month]
+RETURN
+IF(
+    ISBLANK([Total Sales Last month])
+    ,BLANK()
+    ,DIVIDE(Growth,[Total Sales Last month],0))"
+QTD Sales for Currency for table,"CALCULATE([Total Sales],DATESQTD('Dim Calendar'[Date]))"
+Last Year QTD Sales for Table,"
+CALCULATE(
+    [QTD Sales for Currency],
+    DATEADD('Dim Calendar'[Date],-12,MONTH)
+)"
+YTD Sales For Currency for table,"
+CALCULATE([Total Sales],DATESYTD('Dim Calendar'[Date]))"
+Last Year YTD Sales for table,"
+CALCULATE(
+    [YTD Sales For Currency],
+    DATEADD(('Dim Calendar'[Date]),-12,MONTH)
+)"
+MTD Margin for table,"CALCULATE([Profit for currency],DATESMTD('Dim Calendar'[Date])
+)"
+Last Year MTD Margin for table,"
+CALCULATE(
+    [MTD Margin],
+    SAMEPERIODLASTYEAR('Dim Calendar'[Date])
+)
+"
+QTD Margin for table,"CALCULATE([Profit for currency],DATESQTD('Dim Calendar'[Date]))"
+Last Year QTD Margin for table,"
+CALCULATE(
+    [QTD Margin],
+    DATEADD('Dim Calendar'[Date],-12,MONTH))"
+YTD Margin for table,"CALCULATE([Profit for currency],DATESYTD('Dim Calendar'[Date]))"
+Last Year YTD Margin for table,"
+CALCULATE(
+    [YTD Margin],
+    DATEADD(('Dim Calendar'[Date]),-12,MONTH)
+)"
+Total Sales Last Year,"
+Var DateYearSelected = SELECTEDVALUE('Dim Calendar'[Date].[Year])
+Var DateMonthSelected = SELECTEDVALUE('Dim Calendar'[Date].[MonthNo])
+Var Result = 
+CALCULATE(
+    [Total Sales],
+    FILTER(
+        ALL('Dim Calendar'),
+        YEAR('Dim Calendar'[Date]) = DateYearSelected -1
+        && Month('Dim Calendar'[Date]) = DateMonthSelected
+        && 'Dim Calendar'[Week Number of Month as Monday] = SELECTEDVALUE('Dim Calendar'[Week Number of Month as Monday])
+    )
+)
+RETURN Result"
+Total Margin Last Year,"CALCULATE([Profit for currency],DATEADD('Dim Calendar'[Date],-1,YEAR))"
+Sales Cogs Last 12 Months,"
+var To_curr =IF( SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])= BLANK(),""AUD"",SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]))  
+var curr_rate_Budget =CALCULATE(MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),FILTER(ALL( 'Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)) 
+
+Var Values_budget = CALCULATE(SUM('Fact Invoice and Credit'[COGS]), FILTER(ALL('Dim Calendar'), 'Dim Calendar'[Date]>=MAX('Dim Calendar'[Previous 12 months Start date_CURRENT]) && 'Dim Calendar'[Date]<= MAX('Dim Calendar'[Previous month end date_CURRENT])))--MAX('Dim Calendar'[PREVIOUS_MONTH_END_DATE]))))) ---- Change here 
+Var Values_MtHavg =  CALCULATE(SUM('Fact Invoice and Credit'[COGS_MTHAVGCX]), FILTER(ALL('Dim Calendar'), 'Dim Calendar'[Date]>=MAX('Dim Calendar'[Previous 12 months Start date_CURRENT]) && 'Dim Calendar'[Date]<= MAX('Dim Calendar'[Previous month end date_CURRENT])))--MAX('Dim Calendar'[PREVIOUS_MONTH_END_DATE]))))) --- Change Here
+Var Curr_rate_Monthly = Calculate(Values_MtHavg* Max('Fact Currency Rate MTHAVG'[CURRENCY_RATE]),'Fact Currency Rate MTHAVG'[FROM_CURRENCY]=To_curr)
+Var Curr_rate_Budget_1 =  Values_budget* curr_rate_budget * 1.00000
+Var Cal = IF(ISBLANK(Curr_rate_Monthly),curr_rate_Budget_1,Curr_rate_Monthly)
+var out3=
+
+         IF(To_curr = ""AUD"",Values_MtHavg, 
+         Cal
+         )
+
+Return out3"
+Total Sales TMLY,"
+CALCULATE(
+    [Total Sales Last month],
+    ALL('Dim Calendar'[Week Number of Month as Monday])
+)
+
+                                "
+Total Margin TMLY,"
+CALCULATE([Total Margin Last Year] ,
+           all('Dim Calendar'[Week Number of Month as Monday])
+)"
+Average Daily Sales,"
+Var Result = CALCULATE(
+    [MTD Sales for Currency]--/DISTINCTCOUNT('Dim Calendar'[Date])
+    )
+
+
+Return 
+Result"
+Average Daily Sales TMLY,"
+
+Var DateYearSelected = SELECTEDVALUE('Dim Calendar'[Date].[Year])
+Var DateMonthSelected = SELECTEDVALUE('Dim Calendar'[Date].[MonthNo])
+Var Result = 
+CALCULATE(
+    [MTD Sales for Currency],
+    FILTER(
+        ALL('Dim Calendar'),
+        YEAR('Dim Calendar'[Date]) = DateYearSelected -1
+        && Month('Dim Calendar'[Date]) = DateMonthSelected
+        && 'Dim Calendar'[Week Number of Month as Monday] = SELECTEDVALUE('Dim Calendar'[Week Number of Month as Monday])
+    )
+)
+RETURN Result
+
+
+"
+Measure,
+Average Daily Margin,"
+Var Result = CALCULATE(
+    [MTD Margin]--/DISTINCTCOUNT('Dim Calendar'[Date])
+    )
+
+
+Return 
+Result"
+Average Daily Margin TMLY,"
+Var DateYearSelected = SELECTEDVALUE('Dim Calendar'[Date].[Year])
+Var DateMonthSelected = SELECTEDVALUE('Dim Calendar'[Date].[MonthNo])
+Var Result = 
+CALCULATE(
+    [MTD Margin],
+    FILTER(
+        ALL('Dim Calendar'),
+        YEAR('Dim Calendar'[Date]) = DateYearSelected -1
+        && Month('Dim Calendar'[Date]) = DateMonthSelected
+        && 'Dim Calendar'[Week Number of Month as Monday] = SELECTEDVALUE('Dim Calendar'[Week Number of Month as Monday])
+    )
+)
+RETURN Result
+
+
+"
+Decomposition Tree Header,"
+Var GetName = SELECTEDVALUE('Parameter - Sales Decomposition Tree'[Parameter Fields])
+
+RETURN
+SWITCH(
+    GetName,
+    ""'Measures Table'[Total Sales]"",""Total Sales Decomposition Tree"",
+    ""'Measures Table'[Total Orders]"",""Total Quantity Decomposition Tree"",
+    ""'Measures Table'[Profit for currency]"",""Margin $ Decomposition Tree"",
+    ""'Measures Table'[Profit Margin %]"",""Margin % Decomposition tree""
+    )
+
+"
+Total Sales for Limit,"
+Var Getdate = SELECTEDVALUE('Dim Calendar'[Date])
+RETURN
+CALCULATE(
+    [Total Sales],
+    'Dim Calendar'[Date] = Getdate)"
+Decomposition Tree Tooltip,"
+Var GetName = SELECTEDVALUE('Parameter - Sales Decomposition Tree'[Parameter Fields])
+
+RETURN
+SWITCH(
+    GetName,
+    ""'Measures Table'[Total Sales]"",""Total Sales :  ""& FORMAT([Total Sales],""$#,###.##"") & UNICHAR(10) & ""Margin $ :  ""&FORMAT([Profit for currency],""$#,###.##"") & UNICHAR(10) & ""Margin % :  ""&FORMAT([Profit Margin %],""##.##%"") ,
+    ""'Measures Table'[Total Orders]"",""Total Orders :  ""&FORMAT([Total Orders],""#,###"") & UNICHAR(10) & ""Margin $ :  ""&FORMAT([Profit for currency],""$#,###.##"") & UNICHAR(10) & ""Margin % :  ""&FORMAT([Profit Margin %],""##.##%"") ,
+    ""'Measures Table'[Profit for currency]"",""Margin $ :  ""&FORMAT([Profit for currency],""$#,###.##"")  & UNICHAR(10) & ""Margin % :  ""&FORMAT([Profit Margin %],""##.##%"") ,
+    ""'Measures Table'[Profit Margin %]"",""Margin % :  ""&FORMAT([Profit Margin %],""##.##%"") &  UNICHAR(10) & ""Margin $ :  ""&FORMAT([Profit for currency],""$#,###.##"")
+    
+)"
+Count of Days,"
+DISTINCTCOUNT('Dim Calendar'[Date])"
+Dates for the week,"
+Var MinimumDate = Min('Dim Calendar'[Date])
+Var MaxDate = Max('Dim Calendar'[Date])
+RETURN 
+MinimumDate & "" To "" & MaxDate"
+Count of Days Previous Year,"
+CALCULATE(
+DISTINCTCOUNT('Dim Calendar'[Date]),
+Filter(
+    'Dim Calendar',
+    'Dim Calendar'[Date] = DATEADD('Dim Calendar'[Date],-1,YEAR)
+ )
+)"
+TotalSalesLastYear for TMLY,"
+CALCULATE([Total Sales],DATEADD('Dim Calendar'[Date],-1,YEAR))"
+Total TWLY Margin,"
+Var DateYearSelected = SELECTEDVALUE('Dim Calendar'[Date].[Year])
+Var DateMonthSelected = SELECTEDVALUE('Dim Calendar'[Date].[MonthNo])
+Var Result = 
+CALCULATE(
+    [Profit for currency],
+    FILTER(
+        ALL('Dim Calendar'),
+        YEAR('Dim Calendar'[Date]) = DateYearSelected -1
+        && Month('Dim Calendar'[Date]) = DateMonthSelected
+        && 'Dim Calendar'[Week Number of Month as Monday] = SELECTEDVALUE('Dim Calendar'[Week Number of Month as Monday])
+    )
+)
+RETURN Result"
+YTD Margin (%) Tile,"FORMAT([YTD Margin] / 1000000, ""$#,##0.00M"") & "" ("" & FORMAT([YTD Profit Margin %], ""0.00%"") & "")""
+"
+Dates for TWLY,"
+Var DateYearSelected = SELECTEDVALUE('Dim Calendar'[Date].[Year])
+Var DateMonthSelected = SELECTEDVALUE('Dim Calendar'[Date].[MonthNo])
+Var MinDate = 
+CALCULATE(
+    MIN('Dim Calendar'[Date]),
+    FILTER(
+        ALL('Dim Calendar'),
+        YEAR('Dim Calendar'[Date]) = DateYearSelected -1
+        && Month('Dim Calendar'[Date]) = DateMonthSelected
+        && 'Dim Calendar'[Week Number of Month as Monday] = SELECTEDVALUE('Dim Calendar'[Week Number of Month as Monday])
+    )
+)
+
+Var MaxDate = 
+CALCULATE(
+    MAX('Dim Calendar'[Date]),
+    FILTER(
+        ALL('Dim Calendar'),
+        YEAR('Dim Calendar'[Date]) = DateYearSelected -1
+        && Month('Dim Calendar'[Date]) = DateMonthSelected
+        && 'Dim Calendar'[Week Number of Month as Monday] = SELECTEDVALUE('Dim Calendar'[Week Number of Month as Monday])
+    )
+)
+
+Var Result = 
+MinDate & "" To "" & MaxDate
+RETURN Result"
+Average Sales Daily This Month This Year,"
+
+Var DateYearSelected = SELECTEDVALUE('Dim Calendar'[Date].[Year])
+Var DateMonthSelected = SELECTEDVALUE('Dim Calendar'[Date].[MonthNo])
+Var MaxDate = 
+CALCULATE(
+    MAX('Dim Calendar'[Date]),
+    FILTER(
+        ALL('Dim Calendar'),
+        YEAR('Dim Calendar'[Date]) = DateYearSelected -1
+        && Month('Dim Calendar'[Date]) = DateMonthSelected
+        && 'Dim Calendar'[Week Number of Month as Monday] = SELECTEDVALUE('Dim Calendar'[Week Number of Month as Monday])
+    )
+)
+Var MinDate = 
+CALCULATE(
+    MAX('Dim Calendar'[Date]),
+    FILTER(
+        ALL('Dim Calendar'),
+        YEAR('Dim Calendar'[Date]) = DateYearSelected -1
+        && Month('Dim Calendar'[Date]) = DateMonthSelected
+    )
+)
+VAR Result =
+CALCULATE(
+    [Total Sales],
+    FILTER(
+         'Dim Calendar',
+        'Dim Calendar'[Date] <= MaxDate
+        &&'Dim Calendar'[Date] >= MinDate
+    )
+)
+
+RETURN Result"
+Max End Value TDTY,"
+Var CurrentMonth = Month(SELECTEDVALUE('Dim Calendar'[Date]))
+Var CurrentYear = Year(SELECTEDVALUE('Dim Calendar'[Date]))
+Var MaxDate =
+CALCULATE(
+    MAX('Dim Calendar'[Date]),
+    FILTER(
+        ALL('Dim Calendar'),
+        Month('Dim Calendar'[Date]) = CurrentMonth
+        && Year('Dim Calendar'[Date]) = CurrentYear
+    ) 
+        
+)
+
+Var MaxSale = 
+IF(
+    Max('Dim Calendar'[Date]) = MaxDate,
+    [MTD Sales for Currency]
+)
+
+RETURN
+MaxSale"
+Sales Performance MTD for Line Chart,"
+VAR NameofPerformance = SELECTEDVALUE('Paramater - Sales Decomposition Tree'[Name])
+VAR GetId = CALCULATE( MAX('Paramater - Sales Decomposition Tree'[Id]),
+                      'Paramater - Sales Decomposition Tree'[Name]  = NameofPerformance
+                        )
+
+Var Result = SWITCH(
+                GetId,
+                1,[MTD Sales for Currency],
+                2,Format([MTD Quantity],""#,###""),
+                3,[MTD Margin],
+                4,FORMAT([MTD Profit Margin %],""0.00%"")
+)
+
+RETURN Result"
+Header,"
+VAR NameofPerformance = SELECTEDVALUE('Paramater - Sales Decomposition Tree'[Name])
+VAR GetId = CALCULATE( MAX('Paramater - Sales Decomposition Tree'[Id]),
+                      'Paramater - Sales Decomposition Tree'[Name]  = NameofPerformance
+                        )
+
+
+Var Result = SWITCH(
+                GetId,
+                1,""Sales Comparision"",
+                2,""Quantity Comparision"",
+                3,""Margin Comparision"",
+                4,""Margin % Comparision""
+)
+
+RETURN Result"
+TDLY Sales,"
+CALCULATE(
+    [Total Sales],
+    DATEADD('Dim Calendar'[Date],-1,YEAR)
+)
+    "
+TMLY Margin,"CALCULATE( [Profit for currency],SAMEPERIODLASTYEAR('Dim Calendar'[Date]))"
+Measure 3,
+MTD Margin (%) Tile,"FORMAT([MTD Margin] / 1000000, ""$#,##.00M"")  & "" ("" & FORMAT([MTD Profit Margin %], ""0.00%"") & "")""
+"
+Trailing 12 months  Margin for Current  month,"
+Var PresentDate =  Max('Dim Calendar'[Date])
+Var PreviousDate = DATESINPERIOD('Previous Calendar Year'[Date],PresentDate,-12,MONTH)
+Var Result = 
+Calculate(
+    [Profit for currency],
+    REMOVEFILTERS('Dim Calendar'),
+    KEEPFILTERS(PreviousDate),
+    USERELATIONSHIP('Dim Calendar'[Date Key],'Previous Calendar Year'[Date Key])
+)
+
+RETURN Result"
+Trailing 12 months  Margin for Current  month previous year,"
+Var PresentDate =  Max('Dim Calendar'[Date])
+Var PreviousDate = DATESINPERIOD('Previous Calendar Year'[Date],PresentDate,-12,MONTH)
+Var Result = 
+Calculate(
+    [Previous Year Margin Month],
+    REMOVEFILTERS('Dim Calendar'),
+    KEEPFILTERS(PreviousDate),
+    USERELATIONSHIP('Dim Calendar'[Date Key],'Previous Calendar Year'[Date Key])
+)
+
+RETURN Result"
+Sales Growth for trailing 12 months,[Trailing 12 months  Sales for Current  month] - [Trailing 12 months  Sales for Previous Year Same month]
+Order Growth for trailing 12 month,[Trailing 12 months Order for  same month] -[Trailing 12 months Order for previous year same month]
+Trailing 12 months Order for  same month,"
+Var PresentDate =  Max('Dim Calendar'[Date])
+Var PreviousDate = DATESINPERIOD('Previous Calendar Year'[Date],PresentDate,-12,MONTH)
+Var Result = 
+Calculate(
+    [Total Orders],
+    REMOVEFILTERS('Dim Calendar'),
+    KEEPFILTERS(PreviousDate),
+    USERELATIONSHIP('Dim Calendar'[Date Key],'Previous Calendar Year'[Date Key])
+)
+
+RETURN Result"
+Trailing 12 months  Sales for Current  month,"
+Var PresentDate =  Max('Dim Calendar'[Date])
+Var PreviousDate = DATESINPERIOD('Previous Calendar Year'[Date],PresentDate,-12,MONTH)
+Var Result = 
+Calculate(
+    [Total Sales],
+    REMOVEFILTERS('Dim Calendar'),
+    KEEPFILTERS(PreviousDate),
+    USERELATIONSHIP('Dim Calendar'[Date Key],'Previous Calendar Year'[Date Key])
+)
+
+RETURN Result"
+Trailing 12 months Growth Sales for Currency,"
+Var PresentDate =  Max('Dim Calendar'[Date])
+Var PreviousDate = DATESINPERIOD('Previous Calendar Year'[Date],PresentDate,-12,MONTH)
+Var Result = 
+Calculate(
+    [Growth Sales Month for Currency],
+    REMOVEFILTERS('Dim Calendar'),
+    KEEPFILTERS(PreviousDate),
+    USERELATIONSHIP('Dim Calendar'[Date Key],'Previous Calendar Year'[Date Key])
+)
+
+RETURN Result"
+Trailing 12 months  Sales for Previous Year Same month,"
+Var PresentDate =  Max('Dim Calendar'[Date])
+Var PreviousDate = DATESINPERIOD('Previous Calendar Year'[Date],PresentDate,-12,MONTH)
+Var Result = 
+Calculate(
+    [Previous Year Sales Month],
+    REMOVEFILTERS('Dim Calendar'),
+    KEEPFILTERS(PreviousDate),
+    USERELATIONSHIP('Dim Calendar'[Date Key],'Previous Calendar Year'[Date Key])
+)
+
+RETURN Result"
+Trailing 12 months  Sales for Current Year,"
+Var PresentDate =  Max('Dim Calendar'[Date])
+Var PreviousDate = DATESINPERIOD('Previous Calendar Year'[Date],PresentDate,-12,MONTH)
+Var Result = 
+Calculate(
+    [Total Sales],
+    REMOVEFILTERS('Dim Calendar'),
+    KEEPFILTERS(PreviousDate),
+    USERELATIONSHIP('Dim Calendar'[Date Key],'Previous Calendar Year'[Date Key])
+)
+
+RETURN Result"
+Trailing 12 months Order for previous year same month,"
+Var PresentDate =  Max('Dim Calendar'[Date])
+Var PreviousDate = DATESINPERIOD('Previous Calendar Year'[Date],PresentDate,-12,MONTH)
+Var Result = 
+Calculate(
+    [Order for Previous year same month],
+    REMOVEFILTERS('Dim Calendar'),
+    KEEPFILTERS(PreviousDate),
+    USERELATIONSHIP('Dim Calendar'[Date Key],'Previous Calendar Year'[Date Key])
+)
+
+RETURN Result"
+Trailing 12 months Growth Sales %,"
+Var PresentDate =  Max('Dim Calendar'[Date])
+Var PreviousDate = DATESINPERIOD('Previous Calendar Year'[Date],PresentDate,-12,MONTH)
+Var Result = 
+Calculate(
+    [Growth Sales Month %],
+    REMOVEFILTERS('Dim Calendar'),
+    KEEPFILTERS(PreviousDate),
+    USERELATIONSHIP('Dim Calendar'[Date Key],'Previous Calendar Year'[Date Key])
+)
+
+RETURN Result"
+Trailing 12 months Growth Sales,"
+Var PresentDate =  Max('Dim Calendar'[Date])
+Var PreviousDate = DATESINPERIOD('Previous Calendar Year'[Date],PresentDate,-12,MONTH)
+Var Result = 
+Calculate(
+    [Growth Sales Month],
+    REMOVEFILTERS('Dim Calendar'),
+    KEEPFILTERS(PreviousDate),
+    USERELATIONSHIP('Dim Calendar'[Date Key],'Previous Calendar Year'[Date Key])
+)
+
+RETURN Result"
+Trailing 12 Months Sales Growth,"
+Var PresentDate =  Max('Dim Calendar'[Date])
+Var PreviousDate = DATESINPERIOD('Previous Calendar Year'[Date],PresentDate,-12,Month)
+Var Result = 
+Calculate(
+    [Total Sales],
+    REMOVEFILTERS('Dim Calendar'),
+    KEEPFILTERS(PreviousDate),
+    USERELATIONSHIP('Dim Calendar'[Date Key],'Previous Calendar Year'[Date Key])
+)
+
+RETURN Result"
+Margin_Total_Sum,SUM('Fact Invoice and Credit'[MARGIN_TOTAL])
