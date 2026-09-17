@@ -77,9 +77,6 @@ The model contains 180+ DAX measures. Variable-enabled DAX (`VAR ... RETURN`) is
 - `Trailing 12 months Sales for Current month`, `Trailing 12 months Margin for Current month`, `Trailing 12 months Order for same month` (+ prior-year equivalents)
 - Built using `USERELATIONSHIP` against an inactive **Previous Calendar Year** table, so rolling 12-month figures can be compared without disturbing the main date relationship
 
-### 🌳 Dynamic Decomposition Tree
-- `Matrix`, `Header`, `Sales Performance MTD for Line Chart`
-- Single measures that switch between Sales / Orders / Margin / Margin % at runtime, driven by a parameter table and `SELECTEDVALUE` + `SWITCH`
 
 <details>
 <summary>Sample: MTD Sales Growth</summary>
