@@ -52,26 +52,74 @@ Multiple Country Data Sources
 
 ## 📊 Key Measures (DAX)
 
-Variable-enabled DAX (`VAR ... RETURN`) is used throughout for cleaner logic and easier debugging.
+The model contains 180+ DAX measures. Variable-enabled DAX (`VAR ... RETURN`) is used throughout for cleaner logic and easier debugging. Below are the key measures grouped by function.
 
-- `MTD Sales`
-- `MTD Sales TMLY` (This Month Last Year)
-- `% Change vs TMLY`
-- `MTD Margin %`
-- `TY Sales by Month` / `LY Sales by Month`
-- `TY Margin by Month` / `LY Margin by Month`
+### 📅 Time Intelligence — MTD / QTD / YTD
+- `MTD Sales for Currency`, `QTD Sales for Currency`, `YTD Sales For Currency`
+- `Last Year MTD Sales`, `Last Year QTD Sales`, `Last Year YTD Sales`
+- `MTD Sales growth`, `QTD Sales Growth`, `YTD Sales Growth`
+- `TDLY Sales` (Today vs Last Year) and `TMLY Margin` (This Month Last Year)
+
+### 💰 Margin & Profitability
+- `Profit for currency`, `MTD Margin`, `QTD Margin`, `YTD Margin`
+- `MTD Profit Margin %`, `QTD Profit Margin %`, `YTD Profit Margin %`
+- `MTD Margin (%) Tile` / `QTD Margin (%) Tile` / `YTD Margin (%) Tile` — formatted KPI-card measures combining a value and a % in one string
+
+### 🌍 Multi-Currency Conversion
+- `Cost Conv`, `Total Orders Using Currency Filter`, `Discount Value for Currency`
+- Dynamically converts values into whatever currency is selected, by looking up the live rate from a currency-rate fact table (falls back to AUD when nothing is selected)
+
+### 📦 Inventory & Orders
+- `Total Quantity On Hand`, `Total On Hand Value`, `In transit value`, `Turns`
+- `Orders MTD`, `Orders QTD`, `Orders YTD`, `Unit Orders`
+
+### 🔁 Trailing 12-Month Rolling Analysis
+- `Trailing 12 months Sales for Current month`, `Trailing 12 months Margin for Current month`, `Trailing 12 months Order for same month` (+ prior-year equivalents)
+- Built using `USERELATIONSHIP` against an inactive **Previous Calendar Year** table, so rolling 12-month figures can be compared without disturbing the main date relationship
+
+### 🌳 Dynamic Decomposition Tree
+- `Matrix`, `Header`, `Sales Performance MTD for Line Chart`
+- Single measures that switch between Sales / Orders / Margin / Margin % at runtime, driven by a parameter table and `SELECTEDVALUE` + `SWITCH`
 
 <details>
-<summary>Sample: % Change vs TMLY</summary>
+<summary>Sample: MTD Sales Growth</summary>
 
 ```dax
-% Change vs TMLY = 
-VAR CurrentMTD = [MTD Sales]
-VAR LastYearMTD = [MTD Sales TMLY]
-VAR PctChange =
-    DIVIDE ( CurrentMTD - LastYearMTD, LastYearMTD, BLANK() )
+QTD Sales Growth = 
+VAR Growth = [QTD Sales for Currency] - [Last Year QTD Sales]
 RETURN
-    PctChange
+IF(
+    ISBLANK([Last Year QTD Sales]),
+    BLANK(),
+    DIVIDE(Growth, [Last Year QTD Sales], 0)
+)
+```
+</details>
+
+<details>
+<summary>Sample: Dynamic currency conversion</summary>
+
+```dax
+Cost Conv = 
+VAR To_curr = 
+    IF(
+        SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY]) = BLANK(),
+        "AUD",
+        SELECTEDVALUE('Fact Currency Rate_Budget'[TO_CURRENCY])
+    )
+VAR curr_rate =
+    CALCULATE(
+        MAX('Fact Currency Rate_Budget'[CURRENCY_RATE]),
+        FILTER(ALL('Fact Currency Rate_Budget'), 'Fact Currency Rate_Budget'[TO_CURRENCY] = To_curr)
+    )
+VAR valuec =
+    IF(
+        To_curr = "AUD",
+        MAX('Fact Inventory Summary'[ITEM_COST_AUD]),
+        MAX('Fact Inventory Summary'[ITEM_COST_AUD]) * curr_rate * 1.00000
+    )
+RETURN
+    valuec
 ```
 </details>
 
