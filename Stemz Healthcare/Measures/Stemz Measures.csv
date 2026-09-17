@@ -1,0 +1,359 @@
+Measure Name,DAX Formula
+"# of Normal_Applicant_Count","CALCULATE(distinctCOUNT('B1_A_DailyBasis_FirstVisit_TAT_Dump'[visaapplicationnumber]),'B1_A_DailyBasis_FirstVisit_TAT_Dump'[vist] = ""FIRSTVISIT"")"
+"# of Referral_Applicant_Count","CALCULATE(DISTINCTCOUNT('B1_A_DailyBasis_FirstVisit_TAT_Dump'[visaapplicationnumber]),'B1_A_DailyBasis_FirstVisit_TAT_Dump'[vist] = ""REFERRAL"")"
+"1st_Visit_App_Seen_2nd_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[Final_Applicant_Count]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-2,1),1,MONTH))"
+"1st_Visit_App_Seen_3rd_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[Final_Applicant_Count]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),1,MONTH))"
+"1st_Visit_App_Seen_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[Final_Applicant_Count]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"Autofit Certification TAT","
+                var a = AVERAGE('A1_PMS_BASE_CM - PH2'[AutoFit_Certification_TAT (In SEC)])
+                return     RIGHT(""0"" & INT(MOD(a/3600,24)),2) & "":"" &    //Hours 
+    RIGHT(""0"" & INT(MOD(a/60,60)),2) & "":"" &      //Minutes
+    RIGHT(""0"" & INT(MOD(a,60)),2) "
+"Average of PMS Score for CM","AVERAGE('A1_PMS_BASE_CM - PH2'[Sum of PMS Score])"
+"AverageTAT_FIRST_VISIT","Var x = CALCULATE(AVERAGEX('B1_A_DailyBasis_FirstVisit_TAT_Dump',DATEDIFF('B1_A_DailyBasis_FirstVisit_TAT_Dump'[Bio Metric Date].[Date],'B1_A_DailyBasis_FirstVisit_TAT_Dump'[Feedback Request Date].[Date],SECOND)),FILTER('B1_A_DailyBasis_FirstVisit_TAT_Dump','B1_A_DailyBasis_FirstVisit_TAT_Dump'[ZERO_TAT_STATUS]=""Yes""),FILTER('B1_A_DailyBasis_FirstVisit_TAT_Dump','B1_A_DailyBasis_FirstVisit_TAT_Dump'[vist]=""FIRSTVISIT""))
+return     RIGHT(""0"" & INT(MOD(x/3600,24)),2) & "":"" &    //Hours 
+    RIGHT(""0"" & INT(MOD(x/60,60)),2) & "":"" &      //Minutes
+    RIGHT(""0"" & INT(MOD(x,60)),2)"
+"Conf.Ref.Closure Last 3 Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[Confirmatory_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),3,MONTH))"
+"Conf.Ref.Closure Last 6 Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[Confirmatory_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-6,1),6,MONTH))"
+"Conf.Ref.Closure Last Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[Confirmatory_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"Conf.Ref.Closure YTD","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[Confirmatory_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-12,1),12,MONTH))"
+"CT.Ref.Closure Last 3 Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[CT_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),3,MONTH))"
+"CT.Ref.Closure Last 6 Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[CT_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-6,1),6,MONTH))"
+"CT.Ref.Closure Last Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[CT_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"CT.Ref.Closure YTD","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[CT_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-12,1),12,MONTH))"
+"GP TAT Current Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[GP_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY()),1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""nn:ss"")"
+"GP TAT Last 3 Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[GP_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),3,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"GP TAT Last 6 Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[GP_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-6,1),6,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"GP TAT Last Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[GP_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""nn:ss"")"
+"GP TAT YTD","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[GP_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-12,1),12,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"GP_QWP1_Ratings_1st_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[GP_QWP1_Score]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"GP_QWP1_Ratings_2nd_Last_Month","CALCULATE(AVERAGE('A1_PMS Base Core4 - PH1'[GP_QWP1_Score]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-2,1),1,MONTH))"
+"GP_QWP1_Ratings_3rd_Last_Month","CALCULATE(AVERAGE('A1_PMS Base Core4 - PH1'[GP_QWP1_Score]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),1,MONTH))"
+"GP_QWP2_Ratings_1st_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[GP_QWP2_Score]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"GP_QWP2_Ratings_2nd_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[GP_QWP2_Score]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-2,1),1,MONTH))"
+"GP_QWP2_Ratings_3rd_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[GP_QWP2_Score]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),1,MONTH))"
+"GP_TAT1","
+                var a = AVERAGE('A1_PMS_BASE_CM - PH2'[GP_TAT])
+                Return FORMAT(TIME(0,0,a),""nn:ss"")"
+"GRO TAT Current Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[GRO_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY()),1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""nn:ss"")
+"
+"GRO TAT Last 3 Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[GRO_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),3,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"GRO TAT Last 6 Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[GRO_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-6,1),6,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"GRO TAT Last Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[GRO_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""nn:ss"")
+"
+"GRO TAT YTD","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[GRO_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-12,1),12,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"GRO_QWP_Ratings_1st_Last_Month","CALCULATE(AVERAGE('A1_PMS Base Core4 - PH1'[GRO_Final_QWP_Ratings]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"GRO_QWP_Ratings_2nd_Last_Month","CALCULATE(AVERAGE('A1_PMS Base Core4 - PH1'[GRO_Final_QWP_Ratings]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-2,1),1,MONTH))"
+"GRO_QWP_Ratings_3rd_Last_Month","CALCULATE(AVERAGE('A1_PMS Base Core4 - PH1'[GRO_Final_QWP_Ratings]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),1,MONTH))"
+"GRO_TAT1","
+                var a = AVERAGE('A1_PMS_BASE_CM - PH2'[GRO_TAT])
+                Return FORMAT(TIME(0,0,a),""nn:ss"")
+"
+"Measure",""
+"MTD PMS Score","COALESCE(CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[Sum of PMS Score]),DATESMTD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date])),0)"
+"MTD_Applicant","TOTALMTD(SUM(B1_A_DailyBasis_FirstVisit_TAT_Dump[For_Sum]),B1_A_DailyBasis_FirstVisit_TAT_Dump[Registration Date])"
+"MTD_PMS_Score","CALCULATE(AVERAGE('A1_PMS Base Core4 - PH1'[Final_PMS_Score]),DATESMTD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date]))"
+"Nurse_QWP1_Ratings_1st_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[Final_QWP_1_Nurse_Sample_Retake]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"Nurse_QWP1_Ratings_2nd_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[Final_QWP_1_Nurse_Sample_Retake]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-2,1),1,MONTH))"
+"Nurse_QWP1_Ratings_3rd_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[Final_QWP_1_Nurse_Sample_Retake]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),1,MONTH))"
+"Nurse_QWP2_Ratings_1st_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[Final_QWP_2_Nurse_Barcode_Reprint]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"Nurse_QWP2_Ratings_2nd_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[Final_QWP_2_Nurse_Barcode_Reprint]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-2,1),1,MONTH))"
+"Nurse_QWP2_Ratings_3rd_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[Final_QWP_2_Nurse_Barcode_Reprint]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),1,MONTH))"
+"Nurse_TAT1","
+                var a = AVERAGE('A1_PMS_BASE_CM - PH2'[Nursing_TAT])
+                Return FORMAT(TIME(0,0,a),""nn:ss"")"
+"Nursing TAT Current Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[Nursing_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY()),1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""nn:ss"")"
+"Nursing TAT Last 3 Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[Nursing_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),3,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"Nursing TAT Last 6 Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[Nursing_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-6,1),6,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"Nursing TAT Last Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[Nursing_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""nn:ss"")"
+"Nursing TAT YTD","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[Nursing_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-12,1),12,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"OtherLab.Ref.Closure Last 3 Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[OtherLab_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),3,MONTH))"
+"OtherLab.Ref.Closure Last 6 Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[OtherLab_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-6,1),6,MONTH))"
+"OtherLab.Ref.Closure Last Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[OtherLab_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"OtherLab.Ref.Closure YTD","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[OtherLab_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-12,1),12,MONTH))"
+"Overall TAT Current Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[Overall_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY()),1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""nn:ss"")"
+"Overall TAT Last 3 Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[Overall_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),3,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"Overall TAT Last 6 Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[Overall_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-6,1),6,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"Overall TAT Last Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[Overall_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"Overall TAT YTD","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[Overall_TAT]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-12,1),12,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"Overall TAT1","
+                var a = AVERAGE('A1_PMS_BASE_CM - PH2'[Overall_TAT])
+                Return FORMAT(TIME(0,0,a),""nn:ss"")"
+"Overall_FirstVisit_TAT","var Average_Seconds = CALCULATE(AVERAGE('B1_A_DailyBasis_FirstVisit_TAT_Dump'[Difference in SEC]),'B1_A_DailyBasis_FirstVisit_TAT_Dump'[ZERO_TAT_STATUS] = ""Yes"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[vist] = ""FIRSTVISIT"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[Time_Validation]= ""Yes"")
+return  FORMAT(TIME(0,0,Average_Seconds),""nn:ss"")"
+"Overall_Referral_TAT","var Average_Seconds = CALCULATE(AVERAGE('B1_A_DailyBasis_FirstVisit_TAT_Dump'[Difference in SEC]),'B1_A_DailyBasis_FirstVisit_TAT_Dump'[ZERO_TAT_STATUS] = ""Yes"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[vist] = ""REFERRAL"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[Time_Validation]= ""Yes"")
+return  FORMAT(TIME(0,0,Average_Seconds),""nn:ss"")"
+"Overall_TAT in SEC","var a = AVERAGE(B1_A_DailyBasis_FirstVisit_TAT_Dump[Overall_TAT_in SEC])
+
+Return
+
+FORMAT(TIME(0,0,a),""hh:nn:ss"")
+
+
+"
+"Overall_X-Ray_Referral_TAT","var a = AVERAGE('S1_XRAY_Referral_TAT - PH2'[X-ray_Referral_TAT])
+
+Return
+
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"PMS Score Last 3 Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[Sum of PMS Score]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),3,MONTH))"
+"PMS Score Last 6 Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[Sum of PMS Score]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-6,1),6,MONTH))"
+"PMS Score Last Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[Sum of PMS Score]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"PMS Score Year Till Date","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[Sum of PMS Score]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-12,1),12,MONTH))"
+"QFT.Ref.Closure Last 3 Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[QFT_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),3,MONTH))"
+"QFT.Ref.Closure Last 6 Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[QFT_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-6,1),6,MONTH))"
+"QFT.Ref.Closure Last Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[QFT_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"QFT.Ref.Closure YTD","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[QFT_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-12,1),12,MONTH))"
+"QTD PMS Score","COALESCE(CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[Sum of PMS Score]),DATESQTD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date])),0)"
+"QTD_Applicant","TOTALQTD(SUM(B1_A_DailyBasis_FirstVisit_TAT_Dump[For_Sum]),B1_A_DailyBasis_FirstVisit_TAT_Dump[Registration Date])"
+"QTD_PMS_Score","CALCULATE(AVERAGE('A1_PMS Base Core4 - PH1'[Final_PMS_Score]),DATESQTD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date]))"
+"Referral Certification TAT","
+                var a = AVERAGE('A1_PMS_BASE_CM - PH2'[Referral_Certification_TAT (In SEC)])
+                return     RIGHT(""0"" & INT(MOD(a/3600,24)),2) & "":"" &    //Hours 
+    RIGHT(""0"" & INT(MOD(a/60,60)),2) & "":"" &      //Minutes
+    RIGHT(""0"" & INT(MOD(a,60)),2) "
+"SPL.Ref.Closure Last 3 Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[SPECIALITY_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),3,MONTH))"
+"SPL.Ref.Closure Last 6 Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[SPECIALITY_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-6,1),6,MONTH))"
+"SPL.Ref.Closure Last Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[SPECIALITY_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"SPL.Ref.Closure YTD","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[SPECIALITY_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-12,1),12,MONTH))"
+"Sum of KRA for OPS Supervisor","SUM('A1_Append BASE'[KRA SCORE ACHV])"
+"TAT_1st_Last_Month","
+
+Var a = CALCULATE(AVERAGE('A1_PMS Base Core4 - PH1'[Average TAT in Sec]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""nn:ss"")
+
+
+
+"
+"TAT_2nd_Last_Month","
+
+Var a = CALCULATE(AVERAGE('A1_PMS Base Core4 - PH1'[Average TAT in Sec]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-2,1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""nn:ss"")"
+"TAT_3rd_Last_Month","
+
+Var a = CALCULATE(AVERAGE('A1_PMS Base Core4 - PH1'[Average TAT in Sec]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""nn:ss"")"
+"TAT_FIRST_VISIT_GP","var Average_Seconds = CALCULATE(AVERAGE('B1_A_DailyBasis_FirstVisit_TAT_Dump'[Difference in SEC]),'B1_A_DailyBasis_FirstVisit_TAT_Dump'[ZERO_TAT_STATUS] = ""Yes"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[vist] = ""FIRSTVISIT"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[Designation]=""GP"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[Time_Validation]= ""Yes"")
+return TIME(0,0,Average_Seconds)"
+"TAT_FIRST_VISIT_GRO","var Average_Seconds = CALCULATE(AVERAGE('B1_A_DailyBasis_FirstVisit_TAT_Dump'[Difference in SEC]),'B1_A_DailyBasis_FirstVisit_TAT_Dump'[ZERO_TAT_STATUS] = ""Yes"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[vist] = ""FIRSTVISIT"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[Designation]=""GRO"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[Time_Validation]= ""Yes"")
+return TIME(0,0,Average_Seconds)"
+"TAT_FIRST_VISIT_Nurse","var Average_Seconds = CALCULATE(AVERAGE('B1_A_DailyBasis_FirstVisit_TAT_Dump'[Difference in SEC]),'B1_A_DailyBasis_FirstVisit_TAT_Dump'[ZERO_TAT_STATUS] = ""Yes"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[vist] = ""FIRSTVISIT"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[Designation]=""Nurse"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[Time_Validation]= ""Yes"")
+return TIME(0,0,Average_Seconds)"
+"TAT_FIRST_VISIT_X-RAY","var Average_Seconds = CALCULATE(AVERAGE('B1_A_DailyBasis_FirstVisit_TAT_Dump'[Difference in SEC]),'B1_A_DailyBasis_FirstVisit_TAT_Dump'[ZERO_TAT_STATUS] = ""Yes"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[vist] = ""FIRSTVISIT"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[Designation]=""XRAY_RADIOLOGY"",'B1_A_DailyBasis_FirstVisit_TAT_Dump'[Time_Validation]= ""Yes"")
+return TIME(0,0,Average_Seconds)"
+"WorkDone_%age_1st_Last_Month","CALCULATE(AVERAGE('A1_PMS Base Core4 - PH1'[Workdone_%age]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"WorkDone_%age_2nd_Last_Month","CALCULATE(AVERAGE('A1_PMS Base Core4 - PH1'[Workdone_%age]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-2,1),1,MONTH))"
+"WorkDone_%age_3rd_Last_Month","CALCULATE(AVERAGE('A1_PMS Base Core4 - PH1'[Workdone_%age]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),1,MONTH))"
+"X-RAY Referral TAT Current Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_TAT_Referral]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY()),1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""nn:ss"")"
+"X-RAY Referral TAT Last 3 Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_TAT_Referral]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),3,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"X-RAY Referral TAT Last 6 Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_TAT_Referral]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-6,1),6,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"X-RAY Referral TAT Last Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_TAT_Referral]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""nn:ss"")"
+"X-RAY Referral TAT YTD","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_TAT_Referral]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-12,1),12,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"X-RAY TAT Current Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_TAT_Fresh]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY()),1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""nn:ss"")"
+"X-RAY TAT Last 3 Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_TAT_Fresh]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),3,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"X-RAY TAT Last 6 Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_TAT_Fresh]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-6,1),6,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"X-RAY TAT Last Month","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_TAT_Fresh]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""nn:ss"")"
+"X-RAY TAT YTD","
+Var a =
+            CALCULATE(
+                        AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_TAT_Fresh]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-12,1),12,MONTH))
+
+Return
+FORMAT(TIME(0,0,a),""hh:nn:ss"")"
+"XRAY.Ref.Closure Last 3 Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),3,MONTH))"
+"XRAY.Ref.Closure Last 6 Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-6,1),6,MONTH))"
+"XRAY.Ref.Closure Last Month","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"XRAY.Ref.Closure YTD","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_Referral_Closure_%]),DATESINPERIOD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-12,1),12,MONTH))"
+"X-RAY_QWP_Ratings_1st_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[Final_QWP_Ratings_for_Radiology]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-1,1),1,MONTH))"
+"X-RAY_QWP_Ratings_2nd_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[Final_QWP_Ratings_for_Radiology]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-2,1),1,MONTH))"
+"X-RAY_QWP_Ratings_3rd_Last_Month","CALCULATE(SUM('A1_PMS Base Core4 - PH1'[Final_QWP_Ratings_for_Radiology]),DATESINPERIOD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date],DATE(2023,MONTH(TODAY())-3,1),1,MONTH))"
+"X-RAY_Ref TAT1","
+                var a = AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_TAT_Referral])
+                Return FORMAT(TIME(0,0,a),""nn:ss"")"
+"X-RAY_TAT1","
+                var a = AVERAGE('A1_PMS_BASE_CM - PH2'[XRAY_TAT_Fresh])
+                Return FORMAT(TIME(0,0,a),""nn:ss"")"
+"YTD PMS Score","CALCULATE(AVERAGE('A1_PMS_BASE_CM - PH2'[Sum of PMS Score]),DATESYTD('A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date]))"
+"YTD_Applicant","TOTALYTD(SUM(B1_A_DailyBasis_FirstVisit_TAT_Dump[For_Sum]),B1_A_DailyBasis_FirstVisit_TAT_Dump[Registration Date].[Date])"
+"YTD_PMS_Score","CALCULATE(AVERAGE('A1_PMS Base Core4 - PH1'[Final_PMS_Score]),DATESYTD('A1_PMS Base Core4 - PH1'[Dates_For_TimeIntelligence].[Date]))"
