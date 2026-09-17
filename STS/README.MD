@@ -125,15 +125,6 @@ RETURN
 
 ---
 
-## 📈 Visuals
-
-- **Clustered Column Chart** — This Year vs Last Year, month-wise Sales & Margin comparison
-  - Legends enabled (TY vs LY series)
-  - Custom tooltip page (MTD Sales, Margin %, % Change vs TMLY on hover)
-  - Dynamic title reflecting the selected/comparison years
-- Country, Brand, and Category level slicers
-- MTD / YTD KPI cards
-
 ### 📸 Screenshots
 
 **Daily Sales**
