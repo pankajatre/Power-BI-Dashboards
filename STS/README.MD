@@ -88,8 +88,8 @@ RETURN
 
 <!--
 📸 Add your dashboard screenshots here, e.g.:
-![Dashboard Overview](assets/dashboard-overview.png)
-![Sales vs Margin Chart](assets/sales-margin-chart.png)
+![Sales Summary](Images/Sales Summary.png)
+![Sales Performance](Images/Sales Performance.png)
 -->
 
 ---
