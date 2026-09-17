@@ -88,8 +88,8 @@ RETURN
 
 
 📸 Add your dashboard screenshots here, e.g.:
-![Sales Summary](Images/Sales Summary.png)
-![Sales Performance](Images/Sales Performance.png)
+[Sales Summary](Images/Sales Summary.png)
+[Sales Performance](Images/Sales Performance.png)
 
 
 ---
