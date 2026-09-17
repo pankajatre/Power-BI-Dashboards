@@ -62,67 +62,25 @@ The model contains 116 DAX measures. Most follow a repeatable pattern: calculate
 - `GRO_QWP_Ratings`, `GP_QWP1_Ratings`, `GP_QWP2_Ratings`, `X-RAY_QWP_Ratings` — each broken out for the 1st/2nd/3rd last month, to trend recent performance
 - `Average of PMS Score for CM`, `YTD PMS Score`, `YTD_PMS_Score` — overall Performance Management Score
 
-### 🔁 Referral Closure Rates
-- `Conf.Ref.Closure` (Confirmatory Referral), `CT.Ref.Closure`, `XRAY.Ref.Closure`
-- Each tracked over Last Month / Last 3 Month / Last 6 Month / YTD windows using `DATESINPERIOD`
-
 ### 📈 Applicant Volume & Workload
 - `1st_Visit_App_Seen_Last_Month` / `2nd_Last_Month` / `3rd_Last_Month`
 - `YTD_Applicant`, `WorkDone_%age` (Last/2nd Last/3rd Last Month)
-
-<details>
-<summary>Sample: Rolling-period TAT with time formatting</summary>
-
-```dax
-GRO TAT Last 3 Month = 
-VAR a =
-    CALCULATE(
-        AVERAGE('A1_PMS_BASE_CM - PH2'[GRO_TAT]),
-        DATESINPERIOD(
-            'A1_PMS_BASE_CM - PH2'[Dates_For_TimeIntelligence].[Date],
-            DATE(2023, MONTH(TODAY()) - 3, 1),
-            3, MONTH
-        )
-    )
-RETURN
-    FORMAT(TIME(0, 0, a), "hh:nn:ss")
-```
-</details>
-
-<details>
-<summary>Sample: Role-specific First-Visit TAT</summary>
-
-```dax
-TAT_FIRST_VISIT_GRO = 
-VAR Average_Seconds =
-    CALCULATE(
-        AVERAGE('B1_A_DailyBasis_FirstVisit_TAT_Dump'[Difference in SEC]),
-        'B1_A_DailyBasis_FirstVisit_TAT_Dump'[ZERO_TAT_STATUS] = "Yes",
-        'B1_A_DailyBasis_FirstVisit_TAT_Dump'[vist] = "FIRSTVISIT",
-        'B1_A_DailyBasis_FirstVisit_TAT_Dump'[Designation] = "GRO",
-        'B1_A_DailyBasis_FirstVisit_TAT_Dump'[Time_Validation] = "Yes"
-    )
-RETURN
-    TIME(0, 0, Average_Seconds)
-```
-</details>
 
 ---
 
 ### 📸 Screenshots
 
-**Center + Central**
-![Center + Central](Images/Center%20+%20Central.png)
+**PMS for Core**
+![PMS for Core](Images/PMS%20for%20Core.png)
 
 **PMS For CM**
 ![PMS For CM](Images/PMS%20For%20CM.png)
 
-**PMS for Core**
-![PMS for Core](Images/PMS%20for%20Core.png)
+**Center + Central**
+![Center + Central](Images/Center%20+%20Central.png)
 
 **QMC**
 ![QMC](Images/QMC.png)
-
 
 ---
 
