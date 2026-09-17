@@ -86,11 +86,13 @@ RETURN
 - Country, Brand, and Category level slicers
 - MTD / YTD KPI cards
 
+### 📸 Screenshots
 
-📸 Add your dashboard screenshots here, e.g.:
-[Sales Summary](Images/Sales Summary.png)
-[Sales Performance](Images/Sales Performance.png)
+**Daily Sales**
+![Daily Sales](images/Daily%20Sales.png)
 
+**Sales Summary**
+![Sales Summary](images/Sales%20Summary.png)
 
 ---
 
