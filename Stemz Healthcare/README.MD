@@ -109,6 +109,23 @@ RETURN
 
 ---
 
+### 📸 Screenshots
+
+**Center + Central**
+![Center + Central](Images/Center%20+%20Central.png)
+
+**PMS For CM**
+![PMS For CM](Images/PMS%20For%20CM.png)
+
+**PMS for Core**
+![PMS for Core](Images/PMS%20for%20Core.png)
+
+**QMC**
+![QMC](Images/QMC.png)
+
+
+---
+
 ## 🧠 What This Project Demonstrates
 
 - Reconciling **multi-source data** (HR portals + PostgreSQL transactional data) into a single reporting model via a custom base/mapping table
@@ -128,6 +145,3 @@ RETURN
 
 ---
 
-## 📬 Contact
-
-*Add your name, LinkedIn, and portfolio link here.*
